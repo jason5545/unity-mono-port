@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- .NET 宿主：原版反編譯的亂數類別（直接編 MT2 的原始碼）＋ UnityShim.cs → public/ref/rng-dotnet.json。用法見 Program.cs -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <NoWarn>$(NoWarn);CS0649;CS8632</NoWarn>
+    <Mt2Src>$(MSBuildThisFileDirectory)../../reference/ar-win/ExportedProject/Assets/Scripts/Assembly-CSharp/</Mt2Src>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs;UnityShim.cs;../ref/Scenario.cs;../ref/Stubs.cs" />
+    <Compile Include="$(Mt2Src)HadesRNG.cs;$(Mt2Src)RandomState.cs;$(Mt2Src)RngId.cs;$(Mt2Src)RngIdExtensions.cs;$(Mt2Src)MurmurHash2.cs;$(Mt2Src)RandomManager.cs" />
+    <Compile Include="$(Mt2Src)ShinyShoe/Logging/LogGroups.cs;$(Mt2Src)ShinyShoe/Logging/LogOptions.cs" />
+  </ItemGroup>
+</Project>

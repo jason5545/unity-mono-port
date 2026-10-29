@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 原版 MonsterTrain2.exe 的圖示。前景 PNG 由 scripts/app_icon.py 從原版 exe 抽出，
+     寫到 build/apk-res/（原版素材不進版控；scripts/build-apk.mjs 組 APK 前會先跑）。透明的部分墊黑底。 -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@android:color/black" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+</adaptive-icon>

@@ -1,0 +1,6 @@
+out/
+bin/
+obj/
+# 舊版 patcher stubs 產生的 C# 替身（已不用；別台機器留下的舊檔不進版控）
+engine/Generated/
+out-*/

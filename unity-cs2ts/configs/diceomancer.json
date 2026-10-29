@@ -1,0 +1,61 @@
+// Diceomancer（~/GitHub/diceomancer-native，10/27 從 unity-port 拆出去）：重現原本 scripts/csport 寫死的行為，產生檔逐字相同。
+// 用法（任何目錄）：dotnet run --project ~/GitHub/unity-port/unity-cs2ts -- --config ~/GitHub/unity-port/unity-cs2ts/configs/diceomancer.json enemies all
+{
+  "root": "../../../diceomancer-native",
+  "csharp": "reference/csharp",
+  "managed": "../DiCEOMANCER-Swift/game/fullver/Diceomancer_Data/Managed",
+  "generator": "scripts/csport",
+  "sourceAssemblies": {
+    "MoreMountains.Feedbacks": "reference/decompiled/MoreMountains.Feedbacks",
+    "MoreMountains.Tools": "reference/decompiled/MoreMountains.Tools"
+  },
+  // CardBase.cs 同時 using DG.Tweening 與 Unity.VisualScripting，兩邊都有 Sequence；欄位是 DOTween.Sequence() 的回傳值
+  "fixups": [
+    { "file": "Card/CardBase.cs", "from": "private Sequence _cardDoMoveSequence;", "to": "private DG.Tweening.Sequence _cardDoMoveSequence;" }
+  ],
+  "directTypes": [
+    "EnemyIntentionInfo", "IntentionLaunchInfo", "EffectInfo", "CardEffectInfo", "TriggerTargetInfo", "EffectNumberInfo",
+    "GenEnemyInfo", "RNumberInfo", "DiceInfo", "AbilityForOnlyDescription", "CardInfo", "ColorEArray"
+  ],
+  "targets": {
+    "enemies": {
+      "style": "bucket",
+      "out": "src/engine/combat/enemies",
+      "label": "敵人",
+      "indexConst": "GENERATED_ENEMIES",
+      "buckets": {
+        "file": "public/game/data/enemies.json",
+        "collection": "prefabs",
+        "classKey": "enemyClass",
+        "names": ["intentions", "intentionLists", "cards", "triggers", "strings", "summonSlots", "numbers", "raw"]
+      },
+      "groups": {
+        "ch1": [
+          "EnemyBird", "EnemyGoose", "EnemyGrassGuy", "EnemyPiggy", "EnemyMinotaurStalker", "EnemyWolf", "EnemyWoodGuy",
+          "EnemyGoblin", "EnemyScareCrow", "EnemySuperGoose", "EnemyChosenGrass", "EnemyBossThePharmacist", "EnemyPigKing"
+        ],
+        "ch23": [
+          "EnemyObliterator", "EnemySquirrel", "EnemyBigHand", "EnemyMimic", "EnemyMushroom", "EnemyPlumberMouse", "EnemyRedHat",
+          "EnemySkeleton", "EnemyBeaver", "EnemyLick", "EnemyWizard", "EnemyBlackFish", "EnemyBlankLayer", "EnemyGargoyle",
+          "EnemyThings", "EnemyCat", "EnemyIncarnationOfBlue", "EnemyIncarnationOfGreen", "EnemyIncarnationOfRed", "EnemyBlankLayerSeagull", "EnemyGlitchWizard", "EnemyGlitchRedHat"
+        ],
+        "all": ["ch1", "ch23"]
+      }
+    },
+    "stories": {
+      "style": "bucket",
+      "out": "src/engine/world/stories",
+      "label": "特殊故事",
+      "indexConst": "GENERATED_STORIES",
+      "all": { "prefix": "SpecialStory", "baseType": "SpecialStoryConsequence" }
+    },
+    "ui": {
+      "style": "ui",
+      "out": "src/runtime/csport",
+      "outEnv": "DICEO_UI_ROOT",
+      "label": "畫面",
+      "indexConst": "GENERATED_UI",
+      "sourceAssemblies": true
+    }
+  }
+}

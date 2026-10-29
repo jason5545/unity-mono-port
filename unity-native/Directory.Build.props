@@ -1,0 +1,8 @@
+<Project>
+  <!-- engine/UnityNative.csproj 這個 repo 自己的預設值放這裡。
+       只套在引擎上；其他專案（host、glue、patcher）照舊用自己 csproj 裡的設定 -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'UnityNative'">
+    <!-- 沒用 -p:ManagedDir= 指定時（直接 dotnet build host-desktop、IDE），用預設的 out/managed（MT2）；build.sh 傳這款遊戲的 $OUT/managed -->
+    <ManagedDir Condition="'$(ManagedDir)' == ''">$(MSBuildThisFileDirectory)out/managed</ManagedDir>
+  </PropertyGroup>
+</Project>

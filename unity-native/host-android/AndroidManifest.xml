@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <uses-feature android:glEsVersion="0x00030000" android:required="true" />
+  <!-- 圖示由 android.sh 照遊戲的 android.env（APP_RES）帶進來（-p:AppIcon=@mipmap/ic_launcher）；沒給就用系統預設圖示。
+       appCategory="game"／isGame：讓系統當遊戲（同 mt2-web 的 APK 殼） -->
+  <application android:allowBackup="false" android:hardwareAccelerated="true" android:largeHeap="true"
+               android:icon="${appIcon}" android:appCategory="game" android:isGame="true">
+  </application>
+</manifest>

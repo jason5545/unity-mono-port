@@ -1,0 +1,21 @@
+{
+  "name": "@unity-cs2ts/runtime",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Unity 執行環境的網頁版：場景樹、uGUI 排版、TMP 文字、three.js 繪製。遊戲專案用 Vite alias 直接引用 src/。",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@dimforge/rapier3d-deterministic-compat": "^0.21.0",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "@types/three": "^0.186.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.1"
+  }
+}

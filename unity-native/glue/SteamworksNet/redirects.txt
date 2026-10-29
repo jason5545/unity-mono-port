@@ -1,0 +1,5 @@
+# Steamworks.NET → Glue.SteamworksNet（Steam 沒在跑）
+com.rlabrecque.steamworks.net|Steamworks.SteamAPI::RestartAppIfNecessary => Glue.SteamworksNet|Glue.SteamworksNet.SteamAPI
+com.rlabrecque.steamworks.net|Steamworks.SteamAPI::Init => Glue.SteamworksNet|Glue.SteamworksNet.SteamAPI
+com.rlabrecque.steamworks.net|Steamworks.SteamAPI::Shutdown => Glue.SteamworksNet|Glue.SteamworksNet.SteamAPI
+com.rlabrecque.steamworks.net|Steamworks.SteamAPI::RunCallbacks => Glue.SteamworksNet|Glue.SteamworksNet.SteamAPI

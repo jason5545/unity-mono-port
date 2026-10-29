@@ -1,0 +1,19 @@
+node_modules/
+dist/
+# APK 的程式碼產物與圖示（scripts/build-apk.mjs、scripts/app_icon.py）
+build/
+.DS_Store
+tools/unity-ref/Library/
+tools/unity-ref/Temp/
+tools/unity-ref/Logs/
+tools/unity-ref/UserSettings/
+tools/unity-ref/obj/
+tools/unity-ref/*.csproj
+tools/unity-ref/*.sln
+bin/
+obj/
+reference/
+public/game/
+
+# 轉換器的產生檔（原版的 Assembly-CSharp 整個轉，從反編譯的原版程式來，不進版控；npm run port 重產）
+src/csport/gen/

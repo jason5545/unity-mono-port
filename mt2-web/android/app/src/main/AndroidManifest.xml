@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 讓系統把它當遊戲，不是一般 app：appCategory="game" 是 API 26 起的正式做法（電量、網路用量依類別分組，GameManager 也看它），
+         isGame 已棄用但舊的系統元件可能還在讀，兩個都設。HyperOS 的遊戲加速／遊戲空間認不認這兩個旗標未查證，裝上去看 -->
+    <application
+        android:label="Monster Train 2"
+        android:icon="@mipmap/ic_launcher"
+        android:appCategory="game"
+        android:isGame="true"
+        android:allowBackup="false"
+        android:hardwareAccelerated="true"
+        android:largeHeap="true"
+        android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+        <!-- 原版是 16:9 橫向：鎖橫向（可左右翻）。旋轉與鍵盤變化不重建 Activity（WebView 狀態留著，網頁收到 resize 自己重排） -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|uiMode|density"
+            android:resizeableActivity="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

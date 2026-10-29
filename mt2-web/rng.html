@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MT2 亂數驗證</title>
+    <style>
+      :root { color-scheme: light dark; --bg: #f6f6f4; --fg: #1d1d1b; --mut: #6b6b66; --card: #fff; --line: #e2e2dd; --good: #1f7a3a; --bad: #b3261e; --diff: #fdecea; }
+      @media (prefers-color-scheme: dark) { :root { --bg: #161615; --fg: #ececea; --mut: #9a9a94; --card: #1f1f1d; --line: #33332f; --good: #5cc27a; --bad: #ff8a80; --diff: #3a1f1d; } }
+      body { margin: 0; padding: 24px 16px; background: var(--bg); color: var(--fg); font: 14px/1.5 -apple-system, "PingFang TC", system-ui, sans-serif; }
+      #app { max-width: 960px; margin: 0 auto; }
+      h1 { font-size: 20px; margin: 0 0 4px; }
+      h2 { font-size: 15px; margin: 0 0 4px; }
+      .sub { color: var(--mut); margin: 0 0 12px; }
+      .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin: 16px 0; overflow-x: auto; }
+      .good { color: var(--good); } .bad { color: var(--bad); } .big { font-size: 22px; font-weight: 600; margin: 4px 0 8px; }
+      table { border-collapse: collapse; width: 100%; font: 12px/1.4 ui-monospace, Menlo, monospace; }
+      th, td { text-align: left; padding: 3px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+      tr.diff td { background: var(--diff); }
+      pre { font: 12px/1.4 ui-monospace, Menlo, monospace; white-space: pre-wrap; margin: 0; }
+      summary { cursor: pointer; margin-bottom: 8px; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/rng-main.ts"></script>
+  </body>
+</html>

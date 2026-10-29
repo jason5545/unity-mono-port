@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Android 宿主（CoreCLR）：GLSurfaceView 的 GL ES 3 context、觸控當滑鼠、AudioTrack 出聲。
+       遊戲專屬的東西（套件名、標題）由 android.sh 從遊戲那邊的 android.env 帶進來（-p:ApplicationId=… -p:ApplicationTitle=…） -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>26</SupportedOSPlatformVersion>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>HostAndroid</RootNamespace>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>CS0618;CA1416;CA1422</NoWarn>
+    <ApplicationId Condition="'$(ApplicationId)' == ''">com.jason5545.unitynative</ApplicationId>
+    <ApplicationTitle Condition="'$(ApplicationTitle)' == ''">unity-native</ApplicationTitle>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <RuntimeIdentifier>android-arm64</RuntimeIdentifier>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <!-- runtime 用 CoreCLR（SDK 標實驗性）：同一份程式手機開機 3.8 → 2.35 秒、畫面出現到 intro_start 9.4 → 6.6 秒，
+         Mono 的 JIT 跑反序列化、反射慢很多（10/20 交替量測）。CoreCLR 要關 pdb，不然 ResolvedSymbols 缺 DestinationSubPath 建不起來 -->
+    <UseMonoRuntime>false</UseMonoRuntime>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <!-- 遊戲的 DLL 是執行期才從檔案載入的，修剪器看不到它們用了 BCL 的哪些部分：不修剪、不 AOT，全部 JIT -->
+    <PublishTrimmed>false</PublishTrimmed>
+    <RunAOTCompilation>false</RunAOTCompilation>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <!-- marshal methods（Release 預設開）在不修剪時沒產生 n_onCreate 的原生實作，一開就 UnsatisfiedLinkError：改回執行期註冊 -->
+    <AndroidEnableMarshalMethods>false</AndroidEnableMarshalMethods>
+    <ManagedDir>$(MSBuildThisFileDirectory)../out/managed</ManagedDir>
+    <!-- 遊戲的圖示資源（android.sh 把 APP_RES 列的資料夾合併到 AppRes）與 manifest 用的圖示名 -->
+    <AppIcon Condition="'$(AppIcon)' == ''">@android:drawable/sym_def_app_icon</AppIcon>
+    <AndroidManifestPlaceholders>appIcon=$(AppIcon)</AndroidManifestPlaceholders>
+  </PropertyGroup>
+  <!-- 遊戲帶的原生函式庫與 Java 函式庫（android.sh 照 android.env 的 ANDROID_NATIVE_DIR、ANDROID_JAR_DIR 帶進來）：
+       Diceomancer 的 FMOD（libfmod.so、libfmodstudio.so、libresonanceaudio.so 與 fmod.jar；FMOD 的 Java 半邊由 MainActivity 初始化） -->
+  <ItemGroup Condition="'$(GameNativeDir)' != ''">
+    <AndroidNativeLibrary Include="$(GameNativeDir)/*.so" Abi="arm64-v8a" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(GameJarDir)' != ''">
+    <AndroidJavaLibrary Include="$(GameJarDir)/*.jar" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(AppRes)' != ''">
+    <AndroidResource Include="$(AppRes)/**/*" Link="Resources/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../engine/UnityNative.csproj" />
+    <Reference Include="$(ManagedDir)/UnityEngine.CoreModule.dll" Private="false" />
+    <AndroidEnvironment Include="environment.txt" />
+    <!-- patch 過的遊戲 DLL 放進 APK 的 assets，第一次開（或 APK 更新後）解到 app 的內部空間再載入。
+         txt 只帶執行時要讀的 nonpublic-fields.txt；icalls.txt、stubs.txt 是給人看的清單 -->
+    <AndroidAsset Include="$(ManagedDir)/*.dll;$(ManagedDir)/nonpublic-fields.txt" Link="Assets/managed/%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>

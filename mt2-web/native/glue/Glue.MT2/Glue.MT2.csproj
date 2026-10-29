@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- MT2 專屬的轉接（unity-native 用）：redirects.txt 的 redirect／after 指到這裡。只放 MT2 才需要的東西，通用的放 unity-native/engine。
+       unity-native/build.sh 在 patch 之後編（參考 patch 過的遊戲 DLL），輸出到 out/glue 再複製進 out/managed -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>Glue.MT2</AssemblyName>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <NoWarn>CS1701;CS1702;MSB3277;CA1416</NoWarn>
+    <UnityNativeDir>$(MSBuildThisFileDirectory)../../../../unity-native</UnityNativeDir>
+    <ManagedDir>$(UnityNativeDir)/out/managed</ManagedDir>
+    <HandDir>$(UnityNativeDir)/out/hand</HandDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(ManagedDir)/*.dll" Exclude="$(ManagedDir)/Glue.*.dll" Private="false" />
+    <Reference Include="$(HandDir)/UnityNative.dll" Private="false" />
+  </ItemGroup>
+</Project>

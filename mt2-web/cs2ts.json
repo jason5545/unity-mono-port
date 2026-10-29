@@ -1,0 +1,75 @@
+// Monster Train 2 的工具包設定（unity-cs2ts 的轉換器與匯入器共用；路徑相對這個資料夾）。
+// 原版：reference/game-win-2.2.1（Windows 2.2.1，Unity 2022.3.62f2，Mono；macOS Steam 用 NotProton 下載，clonefile 固定下來）
+//   用 Windows 版是為了 shader：macOS build 只有 Metal 原始碼，Windows build 有 DX11 bytecode，走工具包 shaders/convert.py。
+// 乾淨匯出：reference/ar-win（AssetRipper --decompile-game-only --shader-yaml，不進版控；重抽方法見 README）
+{
+  "csharp": "reference/ar-win/ExportedProject/Assets/Scripts/Assembly-CSharp",
+  "managed": "reference/game-win-2.2.1/MonsterTrain2_Data/Managed",
+  // uGUI（UnityEngine.UI）是 managed C#：反編譯的原始碼取代 DLL，Selectable、Button 跟遊戲的子類別一起轉（虛擬分派才接得起來）
+  // 產生方式：~/.dotnet/tools/ilspycmd -p -o reference/decompiled/UnityEngine.UI reference/game-win-2.2.1/MonsterTrain2_Data/Managed/UnityEngine.UI.dll
+  "sourceAssemblies": {
+    "UnityEngine.UI": "reference/decompiled/UnityEngine.UI",
+    // Timeline（Unity.Timeline）也是 managed C#：TimelineAsset、TrackAsset、RuntimeClip 照原版轉，畫面的開關動畫（TimelineTransition）靠它；
+    // 底下的 Playables（PlayableGraph、ScriptPlayable、PlayableDirector）是引擎原生的，由執行環境接（runtime/src/csport/unityPlayables.ts）
+    // 產生方式：~/.dotnet/tools/ilspycmd -p -o reference/decompiled/Unity.Timeline reference/game-win-2.2.1/MonsterTrain2_Data/Managed/Unity.Timeline.dll
+    "Unity.Timeline": "reference/decompiled/Unity.Timeline",
+    // 純 C# 的第三方 DLL：AssetRipper 的匯出已經有原始碼，一起轉（行為跟原版同一份程式；底層只靠 UnityEngine 的 API，由相容層接）
+    "DOTween": "reference/ar-win/ExportedProject/Assets/Scripts/DOTween",
+    "Ink-Runtime": "reference/ar-win/ExportedProject/Assets/Scripts/Ink-Runtime",
+    // 舊版 Addressables（ShinyShoe 的分支，IAsyncOperation、Hash128 的 key）：AssetReference、AsyncOperationBase 照原版轉，
+    // 入口的靜態類別 Addressables 在 exclude，由執行環境接到物件庫（runtime/src/csport/unityAssets.ts）
+    "Unity.Addressables": "reference/ar-win/ExportedProject/Assets/Scripts/Unity.Addressables",
+    "Unity.ResourceManager": "reference/ar-win/ExportedProject/Assets/Scripts/Unity.ResourceManager",
+    // Spine（spine-csharp 是骨架與動畫的純 C#，spine-unity 是 SkeletonAnimation、SkeletonGraphic 這些元件）：主選單與戰鬥的角色都是 Spine，
+    // 照原版轉，底下的 Mesh、MaterialPropertyBlock 由相容層接
+    "spine-csharp": "reference/ar-win/ExportedProject/Assets/Scripts/spine-csharp",
+    "spine-unity": "reference/ar-win/ExportedProject/Assets/Scripts/spine-unity",
+    // Febucci Text Animator：對話的打字機（TypewriterCore）與字的動畫，TMP 那一層改每個字的頂點
+    "Febucci.Attributes.Runtime": "reference/ar-win/ExportedProject/Assets/Scripts/Febucci.Attributes.Runtime",
+    "Febucci.TextAnimator.Runtime": "reference/ar-win/ExportedProject/Assets/Scripts/Febucci.TextAnimator.Runtime",
+    "Febucci.TextAnimator.TMP.Runtime": "reference/ar-win/ExportedProject/Assets/Scripts/Febucci.TextAnimator.TMP.Runtime",
+    // Coffee UIParticle（MaskableGraphic 的子類別，把 ParticleSystem 烘成 CanvasRenderer 的網格）：角色頭上的觸發圖示、卡牌特效都掛它。
+    // 它把 raycastTarget 覆寫成永遠 false，沒轉的時候 EventSystem 只看序列化欄位，戰鬥裡會擋住換樓層的按鈕
+    "Coffee.UIParticle": "reference/ar-win/ExportedProject/Assets/Scripts/Coffee.UIParticle"
+  },
+  "targets": {
+    "web": {
+      "style": "ui",
+      "out": "src/csport",
+      "label": "MT2",
+      "indexConst": "GENERATED",
+      "sourceAssemblies": true,
+      // 迴圈保護（除錯用）：無窮迴圈丟例外帶 C# 位置，不讓分頁當掉。開發期間開著
+      "loopGuard": true,
+      // 參數 * 轉全部（原版的 Assembly-CSharp 與 uGUI 的原始碼）。uGUI 裡執行環境原生做的部分不轉：
+      // 事件（EventSystem、輸入模組、Raycaster）、繪製（Graphic、Image、Text、Mask…）、排版（LayoutGroup、ContentSizeFitter、CanvasScaler…）、
+      // 原生有對應行為的控制項（Toggle、Slider、Scrollbar、ScrollRect、Dropdown、InputField）。遊戲呼叫它們走相容層；遊戲繼承它們的類別照樣轉，基底的部分走相容層。
+      // 網格效果（BaseMeshEffect、Shadow、Outline、PositionAsUV1）照原始碼轉：原生的 Image 產完網格後，執行環境照元件順序叫同一個物件上的 ModifyMesh。
+      "exclude": [
+        "EventSystem", "BaseInputModule", "PointerInputModule", "StandaloneInputModule", "TouchInputModule", "BaseInput", "BaseRaycaster", "GraphicRaycaster",
+        "PhysicsRaycaster", "Physics2DRaycaster", "RaycasterManager", "PanelEventHandler", "PanelRaycaster", "ExecuteEvents", "EventTrigger", "EventTrigger_Entry", "EventTrigger_TriggerEvent",
+        "PointerEventData", "BaseEventData", "AxisEventData", "AbstractEventData", "RaycastResult",
+        "Graphic", "MaskableGraphic", "MaskableGraphic_CullStateChangedEvent", "Image", "RawImage", "Text", "Mask", "RectMask2D", "CanvasScaler",
+        "LayoutGroup", "HorizontalOrVerticalLayoutGroup", "HorizontalLayoutGroup", "VerticalLayoutGroup", "GridLayoutGroup", "ContentSizeFitter", "AspectRatioFitter",
+        "LayoutElement", "LayoutRebuilder", "LayoutUtility", "CanvasUpdateRegistry", "GraphicRegistry", "ClipperRegistry", "Clipping", "RectangularVertexClipper",
+        "MaskUtilities", "StencilMaterial", "StencilMaterial_MatEntry", "FontData", "FontUpdateTracker", "VertexHelper", "BaseVertexEffect",
+        "Toggle", "ToggleGroup", "Slider", "Scrollbar", "ScrollRect", "Dropdown", "InputField", "DefaultControls", "ColorTween", "FloatTween", "TweenRunner$1",
+        "IndexedSet$1", "ReflectionMethodsCache", "MultipleDisplayUtilities", "MaterialAccess", "Misc",
+        "Addressables"
+      ],
+      "groups": {
+        "rng": ["MurmurHash2", "HadesRNG", "RandomState", "RngIdExtensions", "RandomManager"],
+        "menu": ["UIBehaviour", "Selectable", "Button", "ColorBlock", "Navigation", "SpriteState", "AnimationTriggers", "SetPropertyUtility", "GameUISelectableButton", "MainMenuButton", "BaseSignal", "Signal", "Signal$1", "Signal$2", "UISignals", "CoreInputData", "CoreInputDataButton", "CoreInputDataAxis", "CoreInputControlMapping", "CoreSymbol", "CoreSymbolName", "CoreSymbolTable", "CoreCRC", "MappingID", "CoreInput:GetGestureSensitivity", "GameUISelectableCommonExtensions", "ButtonStateSubComponent", "GameObjectUtil:OrNull"]
+      }
+    }
+  },
+  "import": {
+    "export": "reference/ar-win/ExportedProject",
+    "game": "reference/game-win-2.2.1",
+    "out": "public/game",
+    // 遊戲自己的 List<列舉> 欄位：只有一兩個元素時 Unity 寫成 8～15 個字元的十六進位，YAML 會讀成數字
+    //（ScreenManager.screensToAlwaysLoadAndKeepLoaded 的「0e000000」是 [Hud]，被讀成 0.0，hud 場景一直沒載入）。
+    // 匯入器報告的 suspectHexKeys 列的就是這種欄位
+    "int32ArrayKeys": ["screensToAlwaysLoadAndKeepLoaded", "activeInStates"]
+  }
+}

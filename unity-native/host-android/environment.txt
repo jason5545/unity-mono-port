@@ -1,0 +1,2 @@
+# CoreCLR 的 gen0 預算：Android 上預設很小，載入時配置量大、GC 次數暴增（300 格內 133 次）；放大到 64 MB
+DOTNET_GCgen0size=0x4000000

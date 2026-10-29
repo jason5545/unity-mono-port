@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Steamworks.NET（com.rlabrecque.steamworks.net）的轉接：手機與這台 Mac 上沒有 Steam，照原版「Steam 沒開」的路走
+       （RestartAppIfNecessary 回 false、SteamAPI.Init 回 false）。原版找不到 steam_api 的 DLL 時會 Application.Quit，所以這兩個一定要接 -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>Glue.SteamworksNet</AssemblyName>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <ManagedDir>$(MSBuildThisFileDirectory)../../out/managed</ManagedDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(ManagedDir)/com.rlabrecque.steamworks.net.dll" Private="false" />
+  </ItemGroup>
+</Project>
